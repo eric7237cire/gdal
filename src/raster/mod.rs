@@ -10,6 +10,7 @@ pub mod driver;
 pub mod rasterband;
 pub mod types;
 pub mod warp;
+pub mod global_func;
 
 #[cfg(test)]
 mod tests;
