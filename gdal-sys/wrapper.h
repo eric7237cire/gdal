@@ -4,6 +4,7 @@
 #include <gdalwarper.h>
 #include <ogr_api.h>
 #include <ogr_srs_api.h>
+#include <ogr_geometry.h>
 
 /**
  * Type for a OGR error

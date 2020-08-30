@@ -11,7 +11,7 @@ use std::path::{Path, PathBuf};
 #[cfg(feature = "bindgen")]
 pub fn write_bindings(include_paths: Vec<String>, out_path: &Path) {
     let mut builder = bindgen::Builder::default()
-        .header("wrapper.h")
+       // .h2eader("wrapper.h")
         .constified_enum_module(".*")
         .ctypes_prefix("libc")
         .whitelist_function("CPL.*")
@@ -19,7 +19,8 @@ pub fn write_bindings(include_paths: Vec<String>, out_path: &Path) {
         .whitelist_function("OGR.*")
         .whitelist_function("OSR.*")
         .whitelist_function("OCT.*")
-        .whitelist_function("VSI.*");
+        .whitelist_function("VSI.*")
+        .whitelist_type("OGR.*");
 
     for path in include_paths {
         builder = builder.clang_arg("-I");
@@ -98,6 +99,16 @@ fn main() {
             }
         }
         if !found {
+            let osgeodir = PathBuf::from(r"C:\OsGeo4w64\lib");
+            let lib_path = osgeodir.join("gdal_i.lib");
+            if lib_path.exists() {
+                prefer_static = true;
+                lib_name = String::from("gdal_i");
+                lib_dir = Some(PathBuf::from(lib_path.parent().unwrap()));
+                found = true;
+            }
+        }
+        if !found {
             if cfg!(target_env = "msvc") {
                 panic!("windows-gnu requires gdal_i.lib to be present in either $GDAL_LIB_DIR or $GDAL_HOME\\lib.");
             }
@@ -169,7 +180,12 @@ fn main() {
     }
 
     #[cfg(feature = "bindgen")]
-    write_bindings(include_paths, &out_path);
+    {
+        //println!(cargo:rustc-env=VAR=VALUE)
+        write_bindings(include_paths, &out_path);
+
+    }
+
 
     #[cfg(not(feature = "bindgen"))]
     {
@@ -188,6 +204,8 @@ fn main() {
             "prebuilt-bindings/gdal_2.4.rs",
             #[cfg(feature = "min_gdal_version_3_0")]
             "prebuilt-bindings/gdal_3.0.rs",
+            #[cfg(feature = "min_gdal_version_3_2")]
+            "prebuilt-bindings/gdal_3.2.rs",
         ];
         std::fs::copy(&prebuilt_paths[prebuilt_paths.len() - 1], &out_path)
             .expect("Can't copy bindings to output directory");

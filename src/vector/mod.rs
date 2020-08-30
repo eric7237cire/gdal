@@ -22,7 +22,7 @@ pub use crate::vector::feature::{Feature, FieldValue};
 pub use crate::vector::geometry::Geometry;
 pub use crate::vector::layer::{FeatureIterator, FieldDefn, Layer};
 pub use crate::vector::ops::geometry::intersection::Intersection as GeometryIntersection;
-pub use gdal_sys::{OGRFieldType, OGRwkbGeometryType};
+pub use gdal_sys::{OGRFieldType, OGRwkbGeometryType, OGRPoint};
 
 use crate::errors::Result;
 
